@@ -1,0 +1,215 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{array}
+
+\geometry{margin=2.54cm}
+\onehalfspacing
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{0pt}
+\captionsetup{font=small, labelfont=bf}
+\renewcommand{\tablename}{Tabla}
+\renewcommand{\figurename}{Figura}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=black,citecolor=black}
+\titleformat{\section}{\normalfont\bfseries\fontsize{12}{14}\selectfont}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\bfseries\fontsize{12}{14}\selectfont}{\thesubsection.}{0.5em}{}
+
+\newcommand{\apatableinput}[1]{
+\begin{table}[H]
+\centering
+\begin{adjustbox}{max width=\textwidth}
+\input{#1}
+\end{adjustbox}
+\end{table}
+}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+{\Large Universidad EAN\par}
+\vspace{1.2cm}
+{\large Seminario de Investigación\par}
+\vspace{1.2cm}
+{\Large\bfseries Informe técnico avanzado: calidad de condiciones de estudio en bibliotecas públicas de Bogotá\par}
+\vspace{1.6cm}
+{\large Alejandro Roa Aparicio\par}
+{\large Alisson Dayana Navarro Rodríguez\par}
+\vspace{1.2cm}
+{\large Profesor: Diego Armando García García\par}
+\vfill
+{\large 2026\par}
+\end{titlepage}
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\section*{Resumen}
+Este informe presenta una evaluación estadística avanzada de iluminación, ruido y conectividad WiFi en bibliotecas públicas de Bogotá. Además de métricas descriptivas, se incorporan intervalos de confianza, tamaño del efecto para pruebas no paramétricas, comparaciones post-hoc ajustadas, análisis de valores atípicos y modelos de regresión robusta. El objetivo es generar evidencia técnicamente sólida para priorizar intervenciones de infraestructura y gestión operativa desde una perspectiva de experiencia de usuario y política pública urbana.
+
+\newpage
+\tableofcontents
+\newpage
+\listoftables
+\newpage
+\listoffigures
+\newpage
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section{Introducción}
+La calidad ambiental de espacios bibliotecarios condiciona la eficacia del estudio, la permanencia de usuarios y la equidad en acceso a servicios públicos de aprendizaje. En contextos urbanos densos, la calidad de iluminación, confort acústico y conectividad digital debe abordarse como un sistema integrado de desempeño, no como variables aisladas. Este documento eleva el análisis previo hacia un estándar técnico cercano a informe publicable, incorporando inferencia estadística y criterios de priorización estratégica.
+
+\section{Metodología}
+\subsection{Datos y preprocesamiento}
+Se consolidaron todos los archivos de la carpeta \texttt{Datos/}, normalizando variaciones de encabezados y hojas. Se depuraron registros vacíos y se estandarizaron variables de interés (\textit{Lux\_promedio}, \textit{dBA\_prom}, \textit{Bajada\_Mediana}, ocupación y metadatos temporales).
+
+\subsection{Criterios de cumplimiento}
+Se definieron umbrales operativos:
+\begin{itemize}
+    \item Iluminación: 500 lux (lectura), 200 lux (estanterías), 300 lux (circulación/general).
+    \item Ruido: $dBA\_prom \leq 40$.
+    \item WiFi: bajada mediana $\geq 10$ Mbps.
+\end{itemize}
+Se estimaron dos índices: (a) índice compuesto simple (promedio de tres cumplimientos), y (b) índice ponderado propuesto (40\% luz, 40\% ruido, 20\% WiFi).
+
+\subsection{Métodos estadísticos avanzados}
+El análisis incluyó:
+\begin{itemize}
+    \item Intervalos de confianza bootstrap al 95\% para métricas globales.
+    \item Prueba de Kruskal--Wallis entre bibliotecas con tamaño del efecto ($\epsilon^2$).
+    \item Comparaciones post-hoc (Mann--Whitney) con ajuste de Holm y tamaño del efecto (Cliff's Delta).
+    \item Detección de outliers por criterio IQR.
+    \item Modelos OLS con errores robustos (HC3) para explorar relación de ocupación/franja con ruido y WiFi.
+\end{itemize}
+
+\section{Resultados}
+\subsection{Caracterización general}
+\apatableinput{tablas/resumen_general.tex}
+\apatableinput{tablas/intervalos_confianza.tex}
+\noindent\input{tablas/analisis_general_auto.tex}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{figuras/registros_por_biblioteca.png}
+\caption{Distribución del tamaño muestral por biblioteca.}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} La heterogeneidad de tamaño muestral entre bibliotecas condiciona la precisión de estimación. Por ello, los resultados se interpretan junto con dispersión, intervalos y efecto, evitando inferencias basadas únicamente en medias puntuales.
+
+\subsection{Análisis comparativo por biblioteca}
+\apatableinput{tablas/resumen_biblioteca.tex}
+\apatableinput{tablas/cumplimiento.tex}
+\noindent\input{tablas/analisis_avanzado_auto.tex}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/box_lux_biblioteca.png}
+\caption{Distribución de iluminación por biblioteca (lux).}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} La amplitud intercuartílica y la presencia de extremos muestran que la calidad lumínica es altamente variable entre sedes. Este patrón sugiere diferencias estructurales de diseño interior y mantenimiento que no se corrigen con intervenciones homogéneas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/violin_ruido_biblioteca.png}
+\caption{Distribución de ruido por biblioteca (dBA) mediante violin plot.}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} El violin plot revela multimodalidad en varias sedes, compatible con alternancia de periodos de baja y alta perturbación acústica. Esta evidencia es más informativa que un boxplot simple para identificar inestabilidad operativa.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/box_wifi_biblioteca.png}
+\caption{Distribución de velocidad de bajada WiFi por biblioteca (Mbps).}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} Aunque múltiples sedes superan el umbral mínimo, la dispersión interna evidencia desigualdad de experiencia digital. Para usuarios, esto se traduce en confiabilidad heterogénea del servicio en tareas académicas intensivas.
+
+\subsection{Cumplimiento, priorización e índice mejorado}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\textwidth]{figuras/heatmap_cumplimiento.png}
+\caption{Matriz de cumplimiento por criterio y biblioteca.}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} El patrón cruzado de cumplimiento muestra que ninguna dimensión explica por sí sola el desempeño total. Esto justifica la evaluación multicriterio y la priorización por perfil de brecha, no solo por promedio general.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/indice_simple_vs_ponderado.png}
+\caption{Comparación entre índice simple y ponderado por biblioteca.}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} El cambio de ranking entre índices confirma que el promedio simple puede infraestimar bibliotecas con déficits en confort ambiental. El índice ponderado mejora la validez práctica cuando la política de mejora prioriza permanencia y concentración en sala.
+
+\noindent\input{tablas/indice_mejorado_auto.tex}
+\apatableinput{tablas/prioridades.tex}
+
+\subsection{Inferencia estadística y robustez}
+\apatableinput{tablas/efecto_kruskal.tex}
+\apatableinput{tablas/posthoc_significativos.tex}
+\apatableinput{tablas/outliers_resumen.tex}
+\noindent\textbf{Interpretación crítica.} La convergencia entre significancia estadística, tamaño del efecto y contrastes post-hoc respalda que las diferencias observadas son sustantivas y operativamente relevantes. El componente de outliers sugiere que la gestión de eventos extremos debe integrarse al diseño de política, no tratarse como ruido analítico.
+
+\subsection{Modelos explicativos}
+\apatableinput{tablas/regresion_ruido.tex}
+\apatableinput{tablas/regresion_wifi.tex}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{figuras/scatter_ocupacion_ruido.png}
+\caption{Relación entre ocupación y ruido (ajuste lineal).}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} La pendiente positiva respalda la hipótesis de carga acústica por demanda. En términos de gestión, la ocupación debe tratarse como variable de control operativo para proteger condiciones de estudio.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{figuras/scatter_ocupacion_wifi.png}
+\caption{Relación entre ocupación y velocidad de bajada WiFi (ajuste lineal).}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} La asociación más débil con WiFi sugiere que, en el periodo analizado, la red muestra resiliencia relativa frente a variaciones de aforo, aunque persisten sedes con desempeño estructuralmente bajo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.80\textwidth]{figuras/correlacion_metricas.png}
+\caption{Correlación entre métricas físicas y de conectividad.}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} Las correlaciones no sustituyen causalidad, pero orientan hipótesis para diseño de intervención conjunta en infraestructura física y operación.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/metricas_por_franja.png}
+\caption{Comportamiento de métricas por franja horaria.}
+\end{figure}
+\noindent\textbf{Interpretación crítica.} El gradiente temporal observado permite focalizar recursos por horario, optimizando impacto de medidas de corto plazo sin esperar rediseños estructurales.
+
+\section{Discusión}
+\input{tablas/discusion_auto.tex}
+
+\section{Conclusiones}
+\input{tablas/conclusiones_auto.tex}
+
+\section{Recomendaciones priorizadas}
+\input{tablas/recomendaciones_auto.tex}
+
+\section{Limitaciones y sesgos}
+\input{tablas/limitaciones_auto.tex}
+
+\section{Reproducibilidad}
+El análisis es reproducible mediante:
+\begin{itemize}
+    \item Script: \texttt{scripts/analisis\_bibliotecas.py}
+    \item Notebook: \texttt{Informe/Analisis\_integral\_bibliotecas\_bogota.ipynb}
+\end{itemize}
+La actualización del informe requiere ejecutar primero el pipeline y luego compilar este documento.
+
+\end{document}

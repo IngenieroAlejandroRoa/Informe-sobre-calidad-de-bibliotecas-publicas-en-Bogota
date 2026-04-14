@@ -1,0 +1,27 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Jupyter/nbconvert
+*.nbconvert.ipynb
+
+# LaTeX build artifacts
+Informe/build/
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+
+# OS/Editor
+.DS_Store
+.vscode/
+
+# Local caches
+.pytest_cache/
